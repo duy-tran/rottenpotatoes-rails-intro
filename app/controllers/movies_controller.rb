@@ -11,7 +11,14 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.order(params[:sort])
+    if params[:sort] == 'title'
+      @title_class = 'hilite'
+    elsif params[:sort] == 'release_date'
+      @release_class = 'hilite'
+    end
+    @checked_ratings = checked_ratings
+    @movies = Movie.order(params[:sort]).where(rating: @checked_ratings.keys)
+    @all_ratings = Movie.ratings
   end
 
   def new
@@ -42,4 +49,7 @@ class MoviesController < ApplicationController
     redirect_to movies_path
   end
 
+  def checked_ratings
+    params[:ratings] = params[:ratings] || {"G"=>"1", "PG"=>"1", "PG-13"=>"1", "R"=>"1"}
+  end
 end
