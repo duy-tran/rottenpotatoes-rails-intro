@@ -17,7 +17,7 @@ class MoviesController < ApplicationController
       @release_class = 'hilite'
     end
     @checked_ratings = checked_ratings
-    @movies = Movie.order(params[:sort]).where(rating: @checked_ratings.keys)
+    @movies = Movie.order(params[:sort]).where("rating IN (?)",@checked_ratings.keys)
     @all_ratings = Movie.ratings
   end
 
