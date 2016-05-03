@@ -11,15 +11,15 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @all_ratings = Movie.ratings
+    session[:sort] = params[:sort] || session[:sort]
     session[:ratings] = params[:ratings] || session[:ratings] || 1
-    session[:sort] = params[:sort] || session[:sorts]
+    @all_ratings = Movie.ratings
     if session[:sort] == 'title'
       @title_class = 'hilite'
     elsif session[:sort] == 'release_date'
       @release_class = 'hilite'
-    end 
-    @movies = Movie.order(session[:sort]).where("rating IN (?)",session[:ratings].keys)
+    end    
+    @movies = Movie.where("rating IN (?)",session[:ratings].keys).order(session[:sort])
     @checked_ratings = params[:ratings] = params[:ratings] || {"G"=>"1", "PG"=>"1", "PG-13"=>"1", "R"=>"1"}
     @session_ratings = session[:ratings]
   end
@@ -31,7 +31,7 @@ class MoviesController < ApplicationController
   def create
     @movie = Movie.create!(movie_params)
     flash[:notice] = "#{@movie.title} was successfully created."
-    redirect_to movies_path(movies_path(ratings: session[:ratings],sort: session[:sort]))
+    redirect_to movies_path(ratings: session[:ratings],sort: session[:sort])
   end
 
   def edit
@@ -49,7 +49,7 @@ class MoviesController < ApplicationController
     @movie = Movie.find(params[:id])
     @movie.destroy
     flash[:notice] = "Movie '#{@movie.title}' deleted."
-    redirect_to movies_path(movies_path(ratings: session[:ratings],sort: session[:sort]))
+    redirect_to movies_path(ratings: session[:ratings],sort: session[:sort])
   end
 
 end
