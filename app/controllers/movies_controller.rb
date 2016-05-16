@@ -18,9 +18,10 @@ class MoviesController < ApplicationController
       @title_class = 'hilite'
     elsif session[:sort] == 'release_date'
       @release_class = 'hilite'
-    end  
-    @session_ratings = session[:ratings] || params[:ratings] || {"G"=>"1", "PG"=>"1", "PG-13"=>"1", "R"=>"1"}
-    @movies = Movie.where("rating IN (?)",@session_ratings.keys).order(session[:sort])
+    end    
+    @movies = Movie.where("rating IN (?)",session[:ratings].keys).order(session[:sort])
+    @checked_ratings = params[:ratings] = params[:ratings] || {"G"=>"1", "PG"=>"1", "PG-13"=>"1", "R"=>"1"}
+    @session_ratings = session[:ratings]
   end
 
   def new
